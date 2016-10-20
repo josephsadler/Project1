@@ -3,7 +3,7 @@ package edu.towson.cosc.cosc455.jsadle5.project1
 
 trait SyntaxAnalyzer {
   def gittex()
-  def title() : Un: Unitit
+  def title() : Unit
   def body() : Unit
   def paragraph() : Unit
   def innerText() : Unit
