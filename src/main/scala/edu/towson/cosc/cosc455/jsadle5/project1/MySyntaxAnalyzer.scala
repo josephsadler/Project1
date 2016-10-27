@@ -142,12 +142,15 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       Complier.lex.getNextToken()
     }
     else {
-      var x = 0
-      for(x <- 0 to Constants.ALLCONSTANTS.length) {
-
+      if (Constants.ALLCONSTANTS.contains(Complier.currentToken)) { //Syntax error
+        println("Syntax error. Cannot include: '" + Complier.currentToken + "' in the inner text")
+      }
+      else { //Text
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+        innerText()
       }
     }
-
   }
 
   override def heading(): Unit = ???

@@ -24,4 +24,14 @@ object Constants {
   val HEADING : String = "#"
   val ALLCONSTANTS : Array[String] = Array(DOCB, DOCE, TITLEB, BRACKETE, PARAB, PARAE, NEWLINE, EMPTY, BOLD, ITALICS,
                                            LISTITEM, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQUALS, USEB, HEADING)
+
+
+  val asterisk : Char = '*'
+  val plus : Char = '+'
+  val equals : Char = '='
+  val slash : Char = '\\'
+  val exclamation :Char = '!'
+  val pound : Char = '#'
+  val bracket : Char = '['
+  val ANNOTATIONS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, bracket)
 }
