@@ -144,6 +144,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
     else {
       if (Constants.ALLCONSTANTS.contains(Complier.currentToken)) { //Syntax error
         println("Syntax error. Cannot include: '" + Complier.currentToken + "' in the inner text")
+        System.exit(1)
       }
       else { //Text
         parseTree.push(Complier.currentToken)
@@ -153,25 +154,241 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
     }
   }
 
-  override def heading(): Unit = ???
+  override def heading(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.HEADING)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def variableDefine(): Unit = ???
+  override def variableDefine(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.DEFB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.EQUALS)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+        plainText()
+        if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
+          parseTree.push(Complier.currentToken)
+          Complier.lex.getNextToken()
+        }
+        else {
+          println("Syntax error. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
+          System.exit(1)
+        }
+      }
+      else {
+        println("Syntax error. Illegal token in variable definition. Expected: '" + Constants.EQUALS + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
 
-  override def variableUse(): Unit = ???
+  }
 
-  override def bold(): Unit = ???
+  override def variableUse(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.USEB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if(Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+      }
+      else {
+        println("Syntax error. Illegal token in variable definition. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def italics(): Unit = ???
+  override def bold(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase((Constants.BOLD))) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.BOLD)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+      }
+      else {
+        println("Syntax error. Illegal token in variable definition. Expected: '" + Constants.BOLD + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def listItem(): Unit = ???
+  override def italics(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase((Constants.ITALICS))) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.ITALICS)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+      }
+      else {
+        println("Syntax error. Illegal token in variable definition. Expected: '" + Constants.ITALICS + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def innerItem(): Unit = ???
+  override def listItem(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.LISTITEM)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      innerItem()
+      listItem()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def link(): Unit = ???
+  override def innerItem(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.USEB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      variableUse()
+      innerItem()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.BOLD)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      bold()
+      innerItem()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.ITALICS)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      italics()
+      innerItem()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.LINKB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      link()
+      innerItem()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+    else { //Text
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      innerItem()
+    }
+  }
 
-  override def image(): Unit = ???
+  override def link(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.LINKB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+        if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSB)) {
+          parseTree.push(Complier.currentToken)
+          Complier.lex.getNextToken()
+          plainText()
+          if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSE)) {
+            parseTree.push(Complier.currentToken)
+            Complier.lex.getNextToken()
+          }
+          else {
+            println("Syntax error. Expected: '" + Constants.ADDRESSE + "'. Received: '" + Complier.currentToken + "'")
+            System.exit(1)
+          }
+        }
+        else {
+          println("Syntax error. Expected: '" + Constants.ADDRESSB + "'. Received: '" + Complier.currentToken + "'")
+          System.exit(1)
+        }
+      }
+      else {
+        println("Syntax error. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
-  override def newline(): Unit = ???
+  override def image(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.IMAGEB)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+        if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSB)) {
+          parseTree.push(Complier.currentToken)
+          Complier.lex.getNextToken()
+          plainText()
+          if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSE)) {
+            parseTree.push(Complier.currentToken)
+            Complier.lex.getNextToken()
+          }
+          else {
+            println("Syntax error. Expected: '" + Constants.ADDRESSE + "'. Received: '" + Complier.currentToken + "'")
+            System.exit(1)
+          }
+        }
+        else {
+          println("Syntax error. Expected: '" + Constants.ADDRESSB + "'. Received: '" + Complier.currentToken + "'")
+          System.exit(1)
+        }
+      }
+      else {
+        println("Syntax error. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
+
+  override def newline(): Unit = {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.NEWLINE)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+  }
 
   def plainText(): Unit = ???
 }

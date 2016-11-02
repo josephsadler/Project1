@@ -2,36 +2,50 @@ package edu.towson.cosc.cosc455.jsadle5.project1
 
 
 class MyLexicalAnalyzer extends LexicalAnalyzer {
-  override def addChar(): Unit = ???
 
 
   var index : Int = -1
-  override def getChar(): Char = {
+  var nextChar : Char = ' '
+  var possibleToken : String = ""
+
+  override def addChar(): Unit = {
+    possibleToken += nextChar
+  }
+
+  override def getChar(): Unit = {
     index +=1
-    return Complier.fileContents.charAt(index)
+    if (index < Complier.fileContents.length) {
+      nextChar = Complier.fileContents.charAt(index)
+    }
   }
 
   override def getNextToken(): Unit = {
-    var c : Char = getChar()
+    possibleToken = "" //Reset variables
+    nextChar = ' '
 
-    while (c.equals(' ')) {
-      c = getChar()
-    }
-    if (Constants.ANNOTATIONS.contains(c)) {
-      var token : String = processAnnotation(c)
-      if (lookup(token)) {
-        Complier.currentToken = token
+    getChar()
+    nonSpace()
+
+
+    if (Constants.ANNOTATIONS.contains(nextChar)) { //Special character state
+      possibleToken = processAnnotation()
+      if (lookup(possibleToken)) {
+        Complier.currentToken = possibleToken
       }
       else {
-        printf("Lexical error: Illegal token received: '" + token + "'")
+        println("Lexical error: Illegal token received: '" + possibleToken + "'")
         System.exit(1)
       }
     }
-    else if (c.isLetterOrDigit) {
-      Complier.currentToken = textState()
+    else if (nextChar.isLetterOrDigit) { //Text state
+      Complier.currentToken += textState()
+    }
+    else if (nextChar.equals('\n')) {
+      getNextToken() //Skip and get next token
     }
     else {
-      printf("Lexical error: Illegal character received: '" + c + "'")
+      println("Lexical error: Illegal character received: '" + nextChar + "'")
+      System.exit(1)
     }
   }
 
@@ -39,69 +53,86 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     return Constants.ALLCONSTANTS.contains(token)
   }
 
-  def processAnnotation(c : Char) : String = {
-    var token : String = ""
-    token += c
-    var nextChar : Char = ' '
+  def processAnnotation() : String = {
 
-    if (c.equals(Constants.asterisk)) {
-      nextChar = getChar()
-      token += nextChar
-      if (nextChar.equals(Constants.asterisk)) { //bold **
-        token += textState()
-        nextChar = getChar()
-        if (nextChar.equals(Constants.asterisk)) { //first * to end
-          token += nextChar
-          nextChar = getChar()
-          if (nextChar.equals(Constants.asterisk)) {//second * to end
-            token += nextChar
+    if (nextChar.equals(Constants.asterisk)) { // start '*'
+      addChar()
+      getChar()
+      if (nextChar.equals(Constants.asterisk)) { // start '**'
+        addChar()
+        possibleToken += textState()
+        getChar()
+        if (nextChar.equals(Constants.asterisk)) { // end '*'
+          addChar()
+          getChar()
+          if (nextChar.equals(Constants.asterisk)) {// end '**'
+            addChar()
           }
           else {
-            printf("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
+            println("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
             System.exit(1)
           }
         }
         else {
-          printf("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
+          println("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
           System.exit(1)
         }
       }
       else { //italics *
-        token += textState()
-        nextChar = getChar()
-        if (nextChar.equals(Constants.asterisk)) { //only * to end
-          token += nextChar
-          nextChar = getChar()
+        possibleToken += textState()
+        getChar()
+        if (nextChar.equals(Constants.asterisk)) { //* to end
+          addChar()
+          getChar()
         }
         else {
-          printf("Lexical error. Illegal character in ITALICS: '" + nextChar + "'")
+          println("Lexical error. Illegal character in ITALICS: '" + nextChar + "'")
           System.exit(1)
         }
       }
     }
-    else if (c.equals(Constants.plus)) {
-      token += textState()
-
+    else if (nextChar.equals(Constants.plus)) {
+      addChar()
+      nextChar = '+'
+      while (nextChar.equals((Constants.plus))) {
+        possibleToken += textState()
+        getChar()
+      }
     }
-    else if (c.equals(Constants.slash)) {
-
+    else if (nextChar.equals(Constants.slash)) {
+      addChar()
+      possibleToken += textState()
     }
-    else if (c.equals(Constants.exclamation)) {
-
+    else if (nextChar.equals(Constants.exclamation)) {
+      addChar()
+      getChar()
+      if (nextChar.equals(Constants.bracket)) {
+        addChar()
+        possibleToken += textState()
+      }
+      else {
+        println("Lexical error. Illegal character after '!'. Received: '" + nextChar + "'")
+        System.exit(1)
+      }
     }
 
-
-
-    return token
+    return possibleToken
   }
 
   def textState() : String = {
     var text : String = ""
-    var c : Char = getChar()
-    while (c.isLetterOrDigit) {
-      text += c
+    getChar()
+    while (nextChar.isLetterOrDigit || nextChar.equals('\n')) {
+      text += nextChar
+      getChar()
     }
 
     return text
+  }
+
+  def nonSpace() : Unit = {   //Calls get char until a non space character is found
+    while (nextChar.equals(' ')) {
+      getChar()
+    }
   }
 }

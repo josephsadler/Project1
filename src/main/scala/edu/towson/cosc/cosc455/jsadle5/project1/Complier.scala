@@ -13,11 +13,13 @@ object Complier {
     checkFile(args)
 
     readFile(args(0))
-    print(fileContents)
+    println(fileContents)
+
 
     lex.getNextToken()
 
     syntax.gittex()
+
     //on return, there is a parse tree
     //semantic analyzer does stuff
   }
@@ -26,6 +28,10 @@ object Complier {
     if (args.length > 1) {
       println("Usage error, too many arguments")
       System.exit(1);
+    }
+    else if (args.length == 0) {
+      println("Usage error, no arguments provided")
+      System.exit(1)
     }
 
     if (!args(0).endsWith(".mkd")) {
