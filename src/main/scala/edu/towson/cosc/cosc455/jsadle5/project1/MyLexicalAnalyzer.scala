@@ -20,8 +20,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   override def getNextToken(): Unit = {
-    possibleToken = "" //Reset variables
-    nextChar = ' '
+    possibleToken = "" //Reset token
 
     getChar()
     nonSpace()
@@ -40,6 +39,9 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.isLetterOrDigit) { //Text state
       addChar()
       possibleToken += textState()
+      if (nextChar.equals(Constants.brackete)) { //Will add ending bracket if required
+        addChar()
+      }
       Complier.currentToken = possibleToken
     }
     else if (!isCR_LF()) {
