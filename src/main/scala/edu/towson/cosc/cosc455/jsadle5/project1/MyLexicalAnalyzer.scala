@@ -38,9 +38,11 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       }
     }
     else if (nextChar.isLetterOrDigit) { //Text state
-      Complier.currentToken += textState()
+      addChar()
+      possibleToken += textState()
+      Complier.currentToken = possibleToken
     }
-    else if (nextChar.equals('\n')) {
+    else if (!isCR_LF()) {
       getNextToken() //Skip and get next token
     }
     else {
@@ -102,6 +104,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.equals(Constants.slash)) {
       addChar()
       possibleToken += textState()
+      if (nextChar.equals(Constants.bracket)) { //Will add ending bracket if required
+        addChar()
+      }
+    }
+    else if (nextChar.equals((Constants.HEADING))) {
+      addChar()
+      possibleToken += textState()
     }
     else if (nextChar.equals(Constants.exclamation)) {
       addChar()
@@ -122,7 +131,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   def textState() : String = {
     var text : String = ""
     getChar()
-    while (nextChar.isLetterOrDigit || nextChar.equals('\n')) {
+    while (!nextChar.isSpaceChar && !isCR_LF() && !Constants.ANNOTATIONS.contains(nextChar)) {
       text += nextChar
       getChar()
     }
@@ -130,8 +139,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     return text
   }
 
+  def isCR_LF() : Boolean = {
+    return (nextChar.equals('\n') || nextChar.equals('\r'))
+  }
+
   def nonSpace() : Unit = {   //Calls get char until a non space character is found
-    while (nextChar.equals(' ')) {
+    while (nextChar.equals(' ') || isCR_LF()) {
       getChar()
     }
   }

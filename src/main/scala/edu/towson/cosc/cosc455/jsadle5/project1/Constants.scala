@@ -7,8 +7,8 @@ object Constants {
   val DOCE : String = "\\END"
   val TITLEB : String = "\\TITLE["
   val BRACKETE: String = "]"
-  val PARAB : String = "\\PARAB"
-  val PARAE : String = "\\PARAE"
+  val PARAB : String = "\\PARB"
+  val PARAE : String = "\\PARE"
   val NEWLINE : String = "\\"
   val EMPTY : String = ""
   val BOLD : String = "**"
@@ -33,5 +33,6 @@ object Constants {
   val exclamation :Char = '!'
   val pound : Char = '#'
   val bracket : Char = '['
-  val ANNOTATIONS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, bracket)
+  val brackete : Char = ']'
+  val ANNOTATIONS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, bracket, brackete)
 }

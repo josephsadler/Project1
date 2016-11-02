@@ -390,5 +390,16 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
     }
   }
 
-  def plainText(): Unit = ???
+  def plainText(): Unit = {
+    if (Complier.currentToken.length == Complier.currentToken.filter(_.isLetterOrDigit).length) { //If all chars are numbers or letters
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+      plainText()
+    }
+    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
+    }
+
+  }
 }
