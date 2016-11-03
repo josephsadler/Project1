@@ -8,18 +8,18 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   var nextChar : Char = ' '
   var possibleToken : String = ""
 
-  override def addChar(): Unit = {
+  override def addChar(): Unit = { //Adds character to the potential token
     possibleToken += nextChar
   }
 
-  override def getChar(): Unit = {
+  override def getChar(): Unit = { //Gets next character from file input
     index +=1
     if (index < Complier.fileContents.length) {
       nextChar = Complier.fileContents.charAt(index)
     }
   }
 
-  override def getNextToken(): Unit = {
+  override def getNextToken(): Unit = { //Forms next token
     possibleToken = "" //Reset token
 
     getChar()
@@ -39,8 +39,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.isLetterOrDigit) { //Text state
       addChar()
       possibleToken += textState()
-      if (nextChar.equals(Constants.brackete)) { //Will add ending bracket if required
-        addChar()
+      if (nextChar.equals(Constants.brackete)) { //Will decrement index so ending bracket is added
+        index -= 1
       }
       Complier.currentToken = possibleToken
     }
@@ -53,11 +53,11 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     }
   }
 
-  def lookup(token : String): Boolean = {
+  def lookup(token : String): Boolean = { //Returns true if the token is legal
     return Constants.ALLCONSTANTS.contains(token)
   }
 
-  def processAnnotation() : String = {
+  def processAnnotation() : String = { //Processes the annotation characters
 
     if (nextChar.equals(Constants.asterisk)) { // start '*'
       addChar()
@@ -110,7 +110,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
         addChar()
       }
     }
-    else if (nextChar.equals((Constants.HEADING))) {
+    else if (nextChar.equals((Constants.pound))) {
       addChar()
       possibleToken += textState()
     }
@@ -126,11 +126,14 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
         System.exit(1)
       }
     }
+    else if (nextChar.equals(Constants.brackete)) {
+      addChar()
+    }
 
     return possibleToken
   }
 
-  def textState() : String = {
+  def textState() : String = { //Reads in text until end of word, line or token
     var text : String = ""
     getChar()
     while (!nextChar.isSpaceChar && !isCR_LF() && !Constants.ANNOTATIONS.contains(nextChar)) {
@@ -141,7 +144,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     return text
   }
 
-  def isCR_LF() : Boolean = {
+  def isCR_LF() : Boolean = { //Returns true if nextChar is a Carriage return or Line feed
     return (nextChar.equals('\n') || nextChar.equals('\r'))
   }
 

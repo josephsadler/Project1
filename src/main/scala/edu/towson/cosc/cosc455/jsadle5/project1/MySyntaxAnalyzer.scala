@@ -33,6 +33,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
+        return
       }
       else {
         println("Syntax error. Expected '" + Constants.BRACKETE + "'. Received '" + Complier.currentToken + "'")
@@ -142,15 +143,9 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       Complier.lex.getNextToken()
     }
     else {
-      if (Constants.ALLCONSTANTS.contains(Complier.currentToken)) { //Syntax error
-        println("Syntax error. Cannot include: '" + Complier.currentToken + "' in the inner text")
-        System.exit(1)
-      }
-      else { //Text
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
         innerText()
-      }
     }
   }
 
