@@ -65,6 +65,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       Complier.lex.getNextToken()
     }
     else {
+      parseTree.push(Complier.currentToken)
+      Complier.lex.getNextToken()
       innerText()
       body()
     }

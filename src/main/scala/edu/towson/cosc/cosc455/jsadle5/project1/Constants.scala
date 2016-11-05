@@ -34,5 +34,7 @@ object Constants {
   val pound : Char = '#'
   val bracket : Char = '['
   val brackete : Char = ']'
-  val ANNOTATIONS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, bracket, brackete)
+  val parenB : Char = '('
+  val parenE : Char = ')'
+  val ANNOTATIONS : Array[Char] = Array(asterisk, plus, equals, slash, exclamation, pound, bracket, brackete, parenB, parenE)
 }

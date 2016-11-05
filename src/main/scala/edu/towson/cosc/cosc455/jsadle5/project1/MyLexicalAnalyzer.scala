@@ -97,11 +97,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     }
     else if (nextChar.equals(Constants.plus)) {
       addChar()
-      nextChar = '+'
-      while (nextChar.equals((Constants.plus))) {
-        possibleToken += textState()
-        getChar()
-      }
+      possibleToken += textState()
+
     }
     else if (nextChar.equals(Constants.slash)) {
       addChar()
@@ -119,7 +116,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       getChar()
       if (nextChar.equals(Constants.bracket)) {
         addChar()
-        possibleToken += textState()
+        //possibleToken += textState()
       }
       else {
         println("Lexical error. Illegal character after '!'. Received: '" + nextChar + "'")
@@ -127,6 +124,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       }
     }
     else if (nextChar.equals(Constants.brackete)) {
+      addChar()
+    }
+    else if (nextChar.equals(Constants.parenE)) {
+      addChar()
+    }
+    else if (nextChar.equals(Constants.parenB)) {
       addChar()
     }
 
