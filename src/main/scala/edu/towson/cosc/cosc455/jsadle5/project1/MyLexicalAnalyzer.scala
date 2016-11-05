@@ -4,9 +4,10 @@ package edu.towson.cosc.cosc455.jsadle5.project1
 class MyLexicalAnalyzer extends LexicalAnalyzer {
 
 
-  var index : Int = -1
-  var nextChar : Char = ' '
-  var possibleToken : String = ""
+  var index : Int = -1  //Keeps track of character in fileContents
+  var nextChar : Char = ' '  //Holds value of next char in fileContents
+  var possibleToken : String = ""  //Holds value of possible token. Will go into currentToken if valid
+  var EOFvar : Int = 0  //Once index = fileContents.length, becomes 1 and allows lexical and syntax analyzers to quit
 
   override def addChar(): Unit = { //Adds character to the potential token
     possibleToken += nextChar
@@ -16,6 +17,9 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     index +=1
     if (index < Complier.fileContents.length) {
       nextChar = Complier.fileContents.charAt(index)
+    }
+    else {
+      EOFvar = 1
     }
   }
 
@@ -39,12 +43,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.isLetterOrDigit) { //Text state
       addChar()
       possibleToken += textState()
-      if (nextChar.equals(Constants.brackete)) { //Will decrement index so ending bracket is added
+      if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE)) { //Will decrement index so ending ']' or ')' is added
         index -= 1
       }
       Complier.currentToken = possibleToken
     }
-    else if (!isCR_LF()) {
+    else if (isCR_LF()) {
       getNextToken() //Skip and get next token
     }
     else {
@@ -54,7 +58,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   def lookup(token : String): Boolean = { //Returns true if the token is legal
-    return Constants.ALLCONSTANTS.contains(token)
+    return Constants.ALLCONSTANTS.contains(token.toUpperCase)
   }
 
   def processAnnotation() : String = { //Processes the annotation characters
@@ -62,9 +66,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     if (nextChar.equals(Constants.asterisk)) { // start '*'
       addChar()
       getChar()
-      if (nextChar.equals(Constants.asterisk)) { // start '**'
+      if (nextChar.equals(Constants.asterisk)) { // bold, start '**'
         addChar()
-        possibleToken += textState()
         getChar()
         if (nextChar.equals(Constants.asterisk)) { // end '*'
           addChar()
@@ -116,7 +119,6 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       getChar()
       if (nextChar.equals(Constants.bracket)) {
         addChar()
-        //possibleToken += textState()
       }
       else {
         println("Lexical error. Illegal character after '!'. Received: '" + nextChar + "'")
@@ -124,6 +126,9 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       }
     }
     else if (nextChar.equals(Constants.brackete)) {
+      addChar()
+    }
+    else if (nextChar.equals(Constants.bracket)) {
       addChar()
     }
     else if (nextChar.equals(Constants.parenE)) {
@@ -139,7 +144,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   def textState() : String = { //Reads in text until end of word, line or token
     var text : String = ""
     getChar()
-    while (!nextChar.isSpaceChar && !isCR_LF() && !Constants.ANNOTATIONS.contains(nextChar)) {
+
+    while (!nextChar.isSpaceChar && !isCR_LF() && !Constants.ANNOTATIONS.contains(nextChar) && EOFvar == 0) {
       text += nextChar
       getChar()
     }
@@ -147,8 +153,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     return text
   }
 
-  def isCR_LF() : Boolean = { //Returns true if nextChar is a Carriage return or Line feed
-    return (nextChar.equals('\n') || nextChar.equals('\r'))
+  def isCR_LF() : Boolean = { //Returns true if nextChar is a carriage return, line feed, or tab
+    return (nextChar.equals('\n') || nextChar.equals('\r') || nextChar.equals('\t'))
   }
 
   def nonSpace() : Unit = {   //Calls get char until a non space character is found

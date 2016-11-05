@@ -17,7 +17,6 @@ object Complier {
 
 
     lex.getNextToken()
-
     syntax.gittex()
 
     //on return, there is a parse tree

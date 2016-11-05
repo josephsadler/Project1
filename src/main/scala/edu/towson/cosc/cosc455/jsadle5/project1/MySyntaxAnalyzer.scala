@@ -33,7 +33,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
-        return
       }
       else {
         println("Syntax error. Expected '" + Constants.BRACKETE + "'. Received '" + Complier.currentToken + "'")
@@ -49,33 +48,24 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
 
   override def body(): Unit = {
     if (Complier.currentToken.equalsIgnoreCase(Constants.PARAB)){
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       paragraph()
       body()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.NEWLINE)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       newline()
       body()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
+    else if (Complier.lex.EOFvar == 1) {}
     else {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       innerText()
       body()
     }
   }
 
   override def paragraph(): Unit = {
+    parseTree.push(Complier.currentToken)
+    Complier.lex.getNextToken()
     if (Complier.currentToken.equalsIgnoreCase(Constants.DEFB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       variableDefine()
     }
     innerText()
@@ -93,58 +83,39 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
 
   override def innerText(): Unit = {
     if (Complier.currentToken.equalsIgnoreCase(Constants.USEB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       variableUse()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.HEADING)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       heading()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.BOLD)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       bold()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.ITALICS)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       italics()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.LISTITEM)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       listItem()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.IMAGEB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       image()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.LINKB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       link()
       innerText()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.NEWLINE)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       newline()
       innerText()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
-    else {
+    else if (Complier.lex.EOFvar == 1){}
+    else if (isText()) {
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
         innerText()
@@ -156,10 +127,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
       plainText()
-    }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
     }
   }
 
@@ -186,11 +153,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         System.exit(1)
       }
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
-
   }
 
   override def variableUse(): Unit = {
@@ -206,10 +168,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         println("Syntax error. Illegal token in variable definition. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
         System.exit(1)
       }
-    }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
     }
   }
 
@@ -227,10 +185,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         System.exit(1)
       }
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
   }
 
   override def italics(): Unit = {
@@ -247,10 +201,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         System.exit(1)
       }
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
   }
 
   override def listItem(): Unit = {
@@ -260,41 +210,26 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       innerItem()
       listItem()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
   }
 
   override def innerItem(): Unit = {
     if (Complier.currentToken.equalsIgnoreCase(Constants.USEB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       variableUse()
       innerItem()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.BOLD)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       bold()
       innerItem()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.ITALICS)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       italics()
       innerItem()
     }
     else if (Complier.currentToken.equalsIgnoreCase(Constants.LINKB)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
       link()
       innerItem()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
+    else if (Complier.lex.EOFvar == 1) {}
     else { //Text
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
@@ -313,7 +248,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSB)) {
           parseTree.push(Complier.currentToken)
           Complier.lex.getNextToken()
-          plainText()
+          parseTree.push(Complier.currentToken) //Accept any text as address
+          Complier.lex.getNextToken()
           if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSE)) {
             parseTree.push(Complier.currentToken)
             Complier.lex.getNextToken()
@@ -332,10 +268,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         println("Syntax error. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
         System.exit(1)
       }
-    }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
     }
   }
 
@@ -370,10 +302,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         System.exit(1)
       }
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
   }
 
   override def newline(): Unit = {
@@ -381,22 +309,23 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
   }
 
   def plainText(): Unit = {
-    if (Complier.currentToken.length == Complier.currentToken.filter(_.isLetterOrDigit).length) { //If all chars are numbers or letters
+    if (isText()) {
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
       plainText()
     }
-    else if (Complier.currentToken.equalsIgnoreCase(Constants.EMPTY)) {
-      parseTree.push(Complier.currentToken)
-      Complier.lex.getNextToken()
-    }
+    else if (Complier.lex.EOFvar == 1) {}
+  }
 
+  def isText() : Boolean = {
+    if (Complier.currentToken.contains(':')) { //Special case for ':'
+      return true
+
+    }
+    return (Complier.currentToken.length == Complier.currentToken.filter(_.isLetterOrDigit).length) //If all chars are numbers or letters
+                                                                                                    //Should leave out any special characters
   }
 }

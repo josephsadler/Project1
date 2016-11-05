@@ -1,0 +1,7 @@
+\BEGIN
+	\TITLE[The Simpsons]
+	# The Simpsons
+	\PARE
+		This should not work.
+	\PARB
+\END	
