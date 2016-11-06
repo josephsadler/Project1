@@ -47,7 +47,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
   }
 
   override def body(): Unit = {
-    if (Complier.currentToken.equalsIgnoreCase(Constants.PARAB)){
+    if (Complier.currentToken.equalsIgnoreCase(Constants.PARAB) || Complier.currentToken.equalsIgnoreCase(Constants.PARAE)){
       paragraph()
       body()
     }
@@ -63,19 +63,25 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
   }
 
   override def paragraph(): Unit = {
-    parseTree.push(Complier.currentToken)
-    Complier.lex.getNextToken()
-    if (Complier.currentToken.equalsIgnoreCase(Constants.DEFB)) {
-      variableDefine()
-    }
-    innerText()
-
-    if (Complier.currentToken.equalsIgnoreCase(Constants.PARAE)) {
+    if (Complier.currentToken.equalsIgnoreCase(Constants.PARAB)) {
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
+      if (Complier.currentToken.equalsIgnoreCase(Constants.DEFB)) {
+        variableDefine()
+      }
+      innerText()
+
+      if (Complier.currentToken.equalsIgnoreCase(Constants.PARAE)) {
+        parseTree.push(Complier.currentToken)
+        Complier.lex.getNextToken()
+      }
+      else {
+        println("Syntax error. Expected: '" + Constants.PARAE + "'. Received: '" + Complier.currentToken + "'")
+        System.exit(1)
+      }
     }
     else {
-      println("Syntax error. Expected: '" + Constants.PARAE + "'. Received: '" + Complier.currentToken + "'")
+      println("Syntax error. Expected: '" + Constants.PARAB + "'. Received: '" + Complier.currentToken + "'")
       System.exit(1)
     }
 
@@ -142,6 +148,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         if (Complier.currentToken.equalsIgnoreCase(Constants.BRACKETE)) {
           parseTree.push(Complier.currentToken)
           Complier.lex.getNextToken()
+          variableDefine()
         }
         else {
           println("Syntax error. Expected: '" + Constants.BRACKETE + "'. Received: '" + Complier.currentToken + "'")
@@ -320,7 +327,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
   }
 
   def isText() : Boolean = {
-    if (Complier.currentToken.contains(':')) { //Special case for ':'
+    if (Complier.currentToken.contains(':') || Complier.currentToken.contains('.') || Complier.currentToken.contains(',')) { //Special case for ':' and '.'
       return true
 
     }

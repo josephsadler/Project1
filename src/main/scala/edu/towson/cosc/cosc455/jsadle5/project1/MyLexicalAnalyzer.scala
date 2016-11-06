@@ -40,7 +40,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
         System.exit(1)
       }
     }
-    else if (nextChar.isLetterOrDigit || nextChar.equals(':')) { //Text state
+    else if (nextChar.isLetterOrDigit || nextChar.equals(':') || nextChar.equals('.') || nextChar.equals(',')) { //Text state
       addChar()
       possibleToken += textState()
       if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE) || nextChar.equals(Constants.equals)) {
