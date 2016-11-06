@@ -2,9 +2,9 @@
 	\TITLE[Variables] 
 	\DEF[lastname = Simpson]
 	
-	\PARB
+	\PARAB
 		The members of the \USE[lastname] family are:
-	\PARE
+	\PARAE
 	
 	+ Homer \USE[lastname] 
 	+ Marge \USE[lastname]

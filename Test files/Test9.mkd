@@ -4,9 +4,9 @@
 	\DEF[hname = Homer]
 	\DEF[bname = Bart]
 	
-	\PARB
+	\PARAB
 		The members of the \USE[lastname] family are:
-	\PARE
+	\PARAE
 	
 	+ \USE[hname]  \USE[lastname] 
 	+ Marge \USE[lastname]

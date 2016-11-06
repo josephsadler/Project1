@@ -7,6 +7,7 @@ object Complier {
   var currentToken : String = ""
   var lex = new MyLexicalAnalyzer
   var syntax = new MySyntaxAnalyzer
+  var semantic = new MySemanticAnalyzer
 
   def main(args : Array[String]) = {
     //check usage (# of args, file extension)
@@ -18,11 +19,8 @@ object Complier {
 
     lex.getNextToken()
     syntax.gittex()
-
-
-
-    //on return, there is a parse tree
-    //semantic analyzer does stuff
+    semantic.checkSemantics()
+    println()
   }
 
   def checkFile(args : Array[String]) = {

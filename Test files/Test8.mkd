@@ -1,9 +1,9 @@
 \BEGIN
 	\TITLE[The Simpsons]
 	# The Simpsons
-	\PARB
+	\PARAB
 		The members of the [The Simpsons](https://en.wikipedia.org/wiki/The_Simpsons) are:
-	\PARE
+	\PARAE
 	+ Homer Simpson
 	+ Marge Simpson
 	+ Bart Simpson
@@ -13,6 +13,6 @@
 	\\
 	![The Simpsons] (https://upload.wikimedia.org/wikipedia/en/0/0d/Simpsons_FamilyPicture.png)
 \END	
-	\PARB
+	\PARAB
 		This shouldn't be here.
 	\PARAE
