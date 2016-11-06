@@ -40,10 +40,11 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
         System.exit(1)
       }
     }
-    else if (nextChar.isLetterOrDigit) { //Text state
+    else if (nextChar.isLetterOrDigit || nextChar.equals(':')) { //Text state
       addChar()
       possibleToken += textState()
-      if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE)) { //Will decrement index so ending ']' or ')' is added
+      if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE) || nextChar.equals(Constants.equals)) {
+        //Will decrement index so special characters aren't skipped
         index -= 1
       }
       Complier.currentToken = possibleToken
@@ -66,35 +67,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     if (nextChar.equals(Constants.asterisk)) { // start '*'
       addChar()
       getChar()
-      if (nextChar.equals(Constants.asterisk)) { // bold, start '**'
+      if (nextChar.equals(Constants.asterisk)) { // bold, '**'
         addChar()
         getChar()
-        if (nextChar.equals(Constants.asterisk)) { // end '*'
-          addChar()
-          getChar()
-          if (nextChar.equals(Constants.asterisk)) {// end '**'
-            addChar()
-          }
-          else {
-            println("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
-            System.exit(1)
-          }
-        }
-        else {
-          println("Lexical error. Illegal character in BOLD: '" + nextChar + "'")
-          System.exit(1)
-        }
       }
-      else { //italics *
-        possibleToken += textState()
-        getChar()
-        if (nextChar.equals(Constants.asterisk)) { //* to end
-          addChar()
-          getChar()
-        }
-        else {
-          println("Lexical error. Illegal character in ITALICS: '" + nextChar + "'")
-          System.exit(1)
+      else { //italics
+        if (nextChar.equals(':')) { //Special case for fixing skipping ':'
+          index -= 1
         }
       }
     }
@@ -108,6 +87,15 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       possibleToken += textState()
       if (nextChar.equals(Constants.bracket)) { //Will add ending bracket if required
         addChar()
+      }
+      if (possibleToken.equalsIgnoreCase(Constants.DOCE)) { //Ignores '\t' and '\n' after '\END' so program can quit
+        nonSpace()
+        if (index - Complier.fileContents.length != 0) { //Stuff after '\END'
+          index -= 1
+          getNextToken()
+          println("Syntax error. Tokens were received after '" + Constants.DOCE + "'. Received: '" + Complier.currentToken + "'")
+          System.exit(1)
+        }
       }
     }
     else if (nextChar.equals((Constants.pound))) {
@@ -137,6 +125,9 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.equals(Constants.parenB)) {
       addChar()
     }
+    else if (nextChar.equals(Constants.equals)) {
+      addChar()
+    }
 
     return possibleToken
   }
@@ -158,7 +149,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   def nonSpace() : Unit = {   //Calls get char until a non space character is found
-    while (nextChar.equals(' ') || isCR_LF()) {
+    while ((nextChar.equals(' ') || isCR_LF()) && EOFvar == 0) {
       getChar()
     }
   }

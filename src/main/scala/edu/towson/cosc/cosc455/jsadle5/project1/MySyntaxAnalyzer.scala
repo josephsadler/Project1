@@ -8,8 +8,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       if (Complier.currentToken.equalsIgnoreCase(Constants.DOCB)) {
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
-        variableDefine()
         title()
+        variableDefine()
         body()
         if(Complier.currentToken.equalsIgnoreCase(Constants.DOCE)){
           parseTree.push(Complier.currentToken)
@@ -207,8 +207,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
     if (Complier.currentToken.equalsIgnoreCase(Constants.LISTITEM)) {
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
-      innerItem()
-      listItem()
     }
   }
 
@@ -230,7 +228,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       innerItem()
     }
     else if (Complier.lex.EOFvar == 1) {}
-    else { //Text
+    else if (isText()) { //Text
       parseTree.push(Complier.currentToken)
       Complier.lex.getNextToken()
       innerItem()
@@ -282,7 +280,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
         if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSB)) {
           parseTree.push(Complier.currentToken)
           Complier.lex.getNextToken()
-          plainText()
+          parseTree.push(Complier.currentToken) //Accept any text as address
+          Complier.lex.getNextToken()
           if (Complier.currentToken.equalsIgnoreCase(Constants.ADDRESSE)) {
             parseTree.push(Complier.currentToken)
             Complier.lex.getNextToken()
