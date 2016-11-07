@@ -14,7 +14,7 @@ object Complier {
     checkFile(args)
 
     readFile(args(0))
-    println(fileContents)
+    //println(fileContents)
 
     lex.getNextToken()
     syntax.gittex()
