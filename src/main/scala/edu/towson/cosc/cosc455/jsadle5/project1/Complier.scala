@@ -16,11 +16,12 @@ object Complier {
     readFile(args(0))
     println(fileContents)
 
-
     lex.getNextToken()
     syntax.gittex()
-    semantic.checkSemantics()
     println()
+    semantic.checkSemantics()
+    semantic.convertToHTML()
+
   }
 
   def checkFile(args : Array[String]) = {

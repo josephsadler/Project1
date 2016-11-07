@@ -4,7 +4,7 @@ package edu.towson.cosc.cosc455.jsadle5.project1
 class MySyntaxAnalyzer extends SyntaxAnalyzer {
 
   var parseTree = new scala.collection.mutable.Stack[String]
-  override def gittex() = {
+  override def gittex() = { //Start state
       if (Complier.currentToken.equalsIgnoreCase(Constants.DOCB)) {
         parseTree.push(Complier.currentToken)
         Complier.lex.getNextToken()
@@ -331,7 +331,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer {
       return true
 
     }
-    return (Complier.currentToken.length == Complier.currentToken.filter(_.isLetterOrDigit).length) //If all chars are numbers or letters
-                                                                                                    //Should leave out any special characters
+
+    if (Complier.currentToken.contains("\n")) {
+      return (Complier.currentToken.length == ((Complier.currentToken.filter(_.isLetterOrDigit).length)+1))
+    }
+    return (Complier.currentToken.length == (Complier.currentToken.filter(_.isLetterOrDigit).length)) //If all chars are numbers or letters
+                                                                                                      //Should leave out any special characters
   }
 }

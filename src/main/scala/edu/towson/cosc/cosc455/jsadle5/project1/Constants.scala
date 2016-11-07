@@ -1,6 +1,6 @@
 package edu.towson.cosc.cosc455.jsadle5.project1
 
-
+//Holds String and Character constants of the grammar
 
 object Constants {
   val DOCB : String = "\\BEGIN"

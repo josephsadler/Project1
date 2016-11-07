@@ -29,9 +29,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     getChar()
     nonSpace()
 
-
-    if (Constants.ANNOTATIONS.contains(nextChar)) { //Special character state
+    if (EOFvar == 1) {}
+    else if (Constants.ANNOTATIONS.contains(nextChar)) { //Special character state
       possibleToken = processAnnotation()
+      possibleToken = possibleToken.map(_.toUpper)
+      if (possibleToken.endsWith("\n")) {
+        possibleToken = possibleToken.substring(0, possibleToken.length-1)
+      }
       if (lookup(possibleToken)) {
         Complier.currentToken = possibleToken
       }
@@ -43,7 +47,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     else if (nextChar.isLetterOrDigit || nextChar.equals(':') || nextChar.equals('.') || nextChar.equals(',')) { //Text state
       addChar()
       possibleToken += textState()
-      if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE) || nextChar.equals(Constants.equals)) {
+      if (nextChar.equals(Constants.brackete) || nextChar.equals(Constants.parenE) || nextChar.equals(Constants.equals) || nextChar.equals('\\')) {
         //Will decrement index so special characters aren't skipped
         index -= 1
       }
@@ -113,7 +117,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
         System.exit(1)
       }
     }
-    else if (nextChar.equals(Constants.brackete)) {
+    else if (nextChar.equals(Constants.brackete)) {   //The following functions add special characters
       addChar()
     }
     else if (nextChar.equals(Constants.bracket)) {
@@ -139,6 +143,15 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     while (!nextChar.isSpaceChar && !isCR_LF() && !Constants.ANNOTATIONS.contains(nextChar) && EOFvar == 0) {
       text += nextChar
       getChar()
+    }
+    if (nextChar.equals('\n')) {
+      text += nextChar
+    }
+    if (nextChar.equals('\r')) {
+      getChar()
+      if (nextChar.equals('\n')) {
+        text += nextChar
+      }
     }
 
     return text
